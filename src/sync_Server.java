@@ -8,6 +8,8 @@ public class sync_Server {
 	}
 	
 	public static void main(String[] args) {
+		System.out.println("Total args Passed: " + args.length);
+
 		if (args.length != 3) {
 			usage();
 			System.exit(-1);
