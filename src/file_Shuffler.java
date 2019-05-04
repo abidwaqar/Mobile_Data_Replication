@@ -1,6 +1,10 @@
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.Random;
@@ -15,7 +19,7 @@ public class file_Shuffler {
 		System.out.println("Usage:");
 		System.out.println("FileShuffler ROOT_DIRECTORY");
 	}
-	
+
 	private static void changeFile(File file) throws IOException {
 		Random rand = new Random();
 		
@@ -28,10 +32,8 @@ public class file_Shuffler {
 	}
 	
 	private static void changeMetaData(File file) throws IOException {
-		File metaDataFile = new File(file.getCanonicalPath() + File.separator + global_Variables.MetaDataFileSuffix);
-		
 		// TODO: File has been changed. --> Change meta-data of this file.
-		
+		file_Creator.createMetaData(file);
 	}
 	
 	public static void main(String[] args) {
@@ -60,7 +62,8 @@ public class file_Shuffler {
 			}
 			
 			double r = rand.nextDouble();
-			if (r <= ChangeProbability) {
+			if (r <= 0.5)
+			{
 				try {
 					changeFile(file);
 					changeMetaData(file);

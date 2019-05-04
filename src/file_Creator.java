@@ -47,9 +47,10 @@ public class file_Creator {
 		
 		// Replica counts
 		BufferedWriter os = new BufferedWriter(metaDataFile);
-		for (int i = 0; i < global_Variables.NumberOfReplicas; i++)
+		for (int i = 0; i < global_Variables.NumberOfReplicas + 1; i++)
 		{	
-			os.write(i+1 + "," + 1 + ",");			// TODO change ( Assumption : 0 itself , other repplica 1 , 2
+			if (global_Variables.current_id != i)
+				os.write(i + "," + 1 + ",");			// TODO change ( Assumption : 0 itself , other repplica 1 , 2
 		}
 		os.write("" + dateTime);
 		os.close();

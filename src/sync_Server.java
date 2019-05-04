@@ -25,7 +25,7 @@ public class sync_Server {
 			System.err.println("Root directory '" + rootDir + "' does not exist.");
 			System.exit(-1);
 		}
-		
+	
 		int fileServerPort = -1;
 		try {
 			fileServerPort = Integer.parseInt(args[1]);

@@ -63,11 +63,16 @@ public class meta_data_Server extends Thread {
 			System.out.println("In Metadata server");
 			
 			try {
+				PrintWriter printer = new PrintWriter(socket.getOutputStream());
+				
+				//sending server id
+				printer.println(global_Variables.current_id);
+				printer.flush();
+				
 				BufferedReader reader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
 				String clientID = reader.readLine();
 				System.out.println("MDS: clientID:" + clientID);
 				
-				PrintWriter printer = new PrintWriter(socket.getOutputStream());
 				sendMetaData(printer, clientID);
 				
 				reader.close();

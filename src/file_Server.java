@@ -27,40 +27,6 @@ public class file_Server extends Thread {
 			this.socket = socket;
 		}
 		
-		private void resetModificationBit(File file, String clientID) {
-			// TODO: Clear the modification bit of this file.
-			try 
-			{
-				BufferedReader file_br = new BufferedReader(new FileReader(file));
-				String[] metaDataArr = file_br.readLine().split(",");
-				for (int i = 0; i<metaDataArr.length-1; i = i+2)
-				{
-					if (metaDataArr[i].equals(clientID))
-					{
-						metaDataArr[i+1] = "0";
-					}
-				}
-				
-				String metaData = new String();
-				BufferedWriter file_bw = new BufferedWriter(new FileWriter(file));
-				for(int i = 0; i< metaDataArr.length; ++i)
-				{
-					metaData += metaDataArr[i];
-					if (i != metaDataArr.length-1)
-						metaData += ",";
-				}
-				file_bw.write("MetaData" + metaData);
-				System.out.println(metaData);
-				
-				file_br.close();
-				file_bw.close();
-			}
-			catch (IOException e)
-			{
-				e.printStackTrace();
-			}
-		}
-		
 		@Override
 		public void run() {
 			
@@ -88,7 +54,7 @@ public class file_Server extends Thread {
 					String fileinputData = fis.readLine();
 					while (fileinputData != null) 
 					{
-						printer.print(fileinputData);
+						printer.println(fileinputData);
 						fileinputData = fis.readLine();
 						System.out.println("Sending data" + fileinputData);
 					}
@@ -100,7 +66,7 @@ public class file_Server extends Thread {
 					printer.flush();
 					
 					file = new File(rootDir.getCanonicalFile() + File.separator + fileName + global_Variables.MetaDataFileSuffix);
-					resetModificationBit(file, clientID);
+					global_Variables.resetModificationBit(file, clientID);
 					
 					fis.close();
 				}
