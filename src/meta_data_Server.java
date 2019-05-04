@@ -40,9 +40,6 @@ public class meta_data_Server extends Thread {
 						{
 							if (metaDataArr[j].equals(clientID) && metaDataArr[j+1].equals("1"))
 							{
-								//sending filename, timestamp
-//								String[] a = file.getName().split(".");
-//								System.out.println(file.getName());
 								System.out.println(file.getName().replace(global_Variables.MetaDataFileSuffix, "") + "," + metaDataArr[metaDataArr.length-1]);
 								printer.println(file.getName().replace(global_Variables.MetaDataFileSuffix, "") + "," + metaDataArr[metaDataArr.length-1]);
 								printer.flush();

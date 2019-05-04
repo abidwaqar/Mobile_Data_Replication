@@ -12,6 +12,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
+import java.io.PrintWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.Date;
@@ -34,21 +35,22 @@ public class file_Server extends Thread {
 				String[] metaDataArr = file_br.readLine().split(",");
 				for (int i = 0; i<metaDataArr.length-1; i = i+2)
 				{
-					if (metaDataArr[i] == clientID)
+					if (metaDataArr[i].equals(clientID))
 					{
 						metaDataArr[i+1] = "0";
 					}
 				}
-//				date and time remains same
-//				metaDataArr[metaDataArr.length-1] = Long.toString(new Date().getTime()/1000);
 				
 				String metaData = new String();
 				BufferedWriter file_bw = new BufferedWriter(new FileWriter(file));
-				for(int i = 0; i< metaDataArr.length;++i)
+				for(int i = 0; i< metaDataArr.length; ++i)
 				{
 					metaData += metaDataArr[i];
+					if (i != metaDataArr.length-1)
+						metaData += ",";
 				}
-				file_bw.write(metaData);
+				file_bw.write("MetaData" + metaData);
+				System.out.println(metaData);
 				
 				file_br.close();
 				file_bw.close();
@@ -63,11 +65,9 @@ public class file_Server extends Thread {
 		public void run() {
 			
 			System.out.println("In File server");
-			
-			byte[] buffer = new byte[BufferSize];
-			
 			try {
 				BufferedReader reader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+				PrintWriter printer = new PrintWriter(socket.getOutputStream());
 				
 				//get Client ID 
 				String clientID = reader.readLine();
@@ -79,25 +79,36 @@ public class file_Server extends Thread {
 				
 				for (int i = 0; i< filesNum; ++i)
 				{
+					//reading filename
 					String fileName = reader.readLine();
 					System.out.println("File name: " + fileName);
 					File file = new File(rootDir.getCanonicalFile() + File.separator + fileName);
-//					System.out.println(file.getAbsolutePath());
-					OutputStream os = new BufferedOutputStream(socket.getOutputStream());
-					InputStream fis = new BufferedInputStream(new FileInputStream(file));
+					BufferedReader fis = new BufferedReader(new FileReader(file));
 					
-					while (fis.read(buffer) != -1) {
-						os.write(buffer);
-						System.out.println("FS Sending data");
+					String fileinputData = fis.readLine();
+					while (fileinputData != null) 
+					{
+						printer.print(fileinputData);
+						fileinputData = fis.readLine();
+						System.out.println("Sending data" + fileinputData);
 					}
-					os.write(buffer);
+					
+					System.out.println("Exited loop");
+					printer.println();
+					printer.flush();
+					printer.println("-1");
+					printer.flush();
+					
+					file = new File(rootDir.getCanonicalFile() + File.separator + fileName + global_Variables.MetaDataFileSuffix);
 					resetModificationBit(file, clientID);
 					
 					fis.close();
-					os.close();
-					reader.close();
 				}
-			} catch (IOException e) {
+				printer.close();
+				reader.close();
+			}
+			catch (IOException e)
+			{
 				e.printStackTrace();
 			}
 		}

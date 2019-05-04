@@ -48,7 +48,6 @@ public class sync_Client {
 		printer.println(clientId);
 		printer.flush();
 		
-		
 		// TODO: Retrieve meta data via reader object.
 		
 		//receiving metaData
@@ -60,7 +59,7 @@ public class sync_Client {
 			System.out.println(metaData);
 			metaData = reader.readLine();
 		}
-		socket.close();		
+		socket.close();
 		return metaDataArr;
 	}
 	
@@ -92,15 +91,15 @@ public class sync_Client {
 			}
 		}
 		System.out.println("SC: Remaining metadata Files" + filesToSync);
+		metaDataArr = filesToSync;
 	}
 	
 	private void syncFiles(ArrayList<String> filesToSync) throws UnknownHostException, IOException {
 		// TODO: Retrieve files to be updated from server (i.e., replace local replica) and change local meta data.
-		byte[] buffer = new byte[BufferSize];
-		
+	
 		Socket socket = new Socket(serverHostName, fileServerPort);
 		PrintWriter printer = new PrintWriter(socket.getOutputStream());
-		BufferedReader reader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+		BufferedReader socket_reader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
 		
 		//sending client ID
 		printer.println(clientId);
@@ -112,6 +111,7 @@ public class sync_Client {
 		
 		String fileName;
 		String fileData;
+		
 		for (int i = 0; i< filesToSync.size(); ++i)
 		{
 			fileName = filesToSync.get(i).split(",")[0];		
@@ -119,24 +119,23 @@ public class sync_Client {
 			//sending file name to server
 			printer.println(fileName);
 			printer.flush();
+			
 			System.out.println(fileName);
+			
 			File file = new File(rootDir.getCanonicalFile() + File.separator + fileName);
 
-			OutputStream file_os = new BufferedOutputStream(new FileOutputStream(file, false));
-			InputStream server_is = new BufferedInputStream(socket.getInputStream());
+			BufferedWriter file_bw = new BufferedWriter(new FileWriter(file));
 			
-			//TODO check if -1 or "-1"
-			while (server_is.read(buffer) != -1) {
-				file_os.write(buffer);
+			String socketData = socket_reader.readLine();
+			while (!socketData.equals("-1")) {
+				file_bw.write(socketData);
+				socketData = socket_reader.readLine();
+//				System.out.println(socketData);
 			}
-			file_os.write(buffer);
-			file_os.write(buffer);
-
-
-			file_os.close();
-			server_is.close();
-			reader.close();
+			file_bw.close();
 		}
+		printer.close();
+		socket_reader.close();
 		System.out.println("Files Synced");
 	}
 	
