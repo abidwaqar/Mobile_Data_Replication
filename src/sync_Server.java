@@ -1,5 +1,6 @@
 
 import java.io.File;
+import java.util.Scanner;
 
 public class sync_Server {
 	static void usage() {
@@ -41,6 +42,11 @@ public class sync_Server {
 			System.err.println("Invalid meta data server port.");
 			System.exit(-1);
 		}
+		
+		Scanner cin = new Scanner(System.in);
+		System.out.print("Enter ID of Node: ");
+		global_Variables.current_id = cin.nextInt();
+		cin.close();
 		
 		file_Server fileServer = new file_Server(fileServerPort, rootDir);
 		fileServer.start();

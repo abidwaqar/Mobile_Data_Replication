@@ -30,7 +30,7 @@ public class global_Variables {
 			
 			String metaData = new String();
 			BufferedWriter file_bw = new BufferedWriter(new FileWriter(metafile));
-			for(int i = 0; i< metaDataArr.length; ++i)
+			for(int i = 0; i< metaDataArr.length-1; ++i)
 			{
 				metaData += metaDataArr[i];
 				metaData += ",";
